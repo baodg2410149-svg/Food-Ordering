@@ -2,80 +2,130 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Food Ordering - Admin</title>
-  <link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/shared-navigation.css">
+  <title>Admin Dashboard</title>
+
+  <!-- FONT -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
-  <header>
-    <h1>Food Ordering</h1>
-    <p>Admin Dashboard</p>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar">
+  <div class="logo">Phở Admin</div>
+  <nav>
+    <a href="Home.html"><span>Home</span></a>
+    <a href="Ordering_page.html"><span>Orders</span></a>
+    <a href="Order_tracking.html"><span>Tracking</span></a>
+    <a class="active" href="Admin.html"><span>Admin</span></a>
+  </nav>
+</aside>
+
+<!-- ===== MAIN ===== -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <h1>Dashboard</h1>
+    <p>Manage your restaurant system</p>
   </header>
 
-  <nav class="shared-nav" aria-label="Primary navigation">
-    <a class="nav-brand" href="Home.html"><svg class="nav-pho-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M22 30c-5-6 1-10 2-16s-2-8 0-12M32 30c-4-6 2-11 2-17s-3-7 0-11M42 30c4-6-2-10-1-16s3-7 0-11"/><path d="M12 38c7-4 33-4 40 0M15 40c2 10 8 17 17 18h1c9-1 15-8 17-18M20 38c3-2 5 2 8 0s5-2 8 0 5-2 8 0M24 61h16"/></svg><span>Phở Việt</span></a>
-    <a href="Home.html">Home</a>
-    <a href="Ordering_page.html">Order</a>
-    <a href="Order_tracking.html">Track Order</a>
-    <a class="is-current" href="Admin.html" aria-current="page">Admin</a>
-  </nav>
-
-  <section id="loginSection">
+  <!-- LOGIN -->
+  <section id="loginSection" class="card">
     <h2>Admin Login</h2>
     <form id="loginForm">
-      <label for="adminKeyInput">Admin Key</label>
+      <label>Admin Key</label>
       <div class="password-wrapper">
         <input type="password" id="adminKeyInput" required>
         <button type="button" id="togglePassword">👁</button>
       </div>
       <div id="loginError" class="field-error"></div>
-
       <button type="submit">Login</button>
     </form>
   </section>
 
+  <!-- DASHBOARD -->
   <main id="adminMain" style="display:none">
-    <section>
+
+    <!-- ===== STATS ===== -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <p>Total Revenue</p>
+        <h3 id="statRevenue">0</h3>
+      </div>
+
+      <div class="stat-card">
+        <p>Total Orders</p>
+        <h3 id="statOrders">0</h3>
+      </div>
+
+      <div class="stat-card">
+        <p>Completed</p>
+        <h3 id="statCompleted">0</h3>
+      </div>
+
+      <div class="stat-card">
+        <p>Pending</p>
+        <h3 id="statPending">0</h3>
+      </div>
+    </div>
+
+    <!-- ADD DISH -->
+    <section class="card">
       <h2>Add New Dish</h2>
       <form id="addMenuForm">
-        <label for="mName">Dish Name</label>
-        <input type="text" id="mName" required>
-
-        <label for="mDesc">Description</label>
-        <input type="text" id="mDesc">
-
-        <label for="mPrice">Price (VND)</label>
-        <input type="number" id="mPrice" required min="0">
-
-        <label for="mCategory">Category (e.g. main / side / drink)</label>
-        <input type="text" id="mCategory">
-
+        <input type="text" id="mName" placeholder="Dish name" required>
+        <input type="text" id="mDesc" placeholder="Description">
+        <input type="number" id="mPrice" placeholder="Price" required>
+        <input type="text" id="mCategory" placeholder="Category">
         <button type="submit">Add Dish</button>
         <div id="menuMessage"></div>
       </form>
     </section>
 
-    <section>
+    <!-- MENU -->
+    <section class="card">
       <h2>Menu List</h2>
       <table>
         <thead>
-          <tr><th>ID</th><th>Name</th><th>Price</th><th>Category</th><th>Action</th></tr>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Category</th>
+            <th>Action</th>
+          </tr>
         </thead>
         <tbody id="menuTableBody"></tbody>
       </table>
     </section>
 
-    <section>
+    <!-- ORDERS -->
+    <section class="card">
       <h2>Order List</h2>
       <table>
         <thead>
-          <tr><th>ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Payment</th><th>Action</th></tr>
+          <tr>
+            <th>ID</th>
+            <th>Customer</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Payment</th>
+            <th>Action</th>
+          </tr>
         </thead>
         <tbody id="orderTableBody"></tbody>
       </table>
     </section>
+
   </main>
 
-  <script src="js/api.js"></script>
-  <script src="js/admin.js"></script>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/admin.js"></script>
+
 </body>
 </html>

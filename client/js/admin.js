@@ -47,6 +47,25 @@ function showDashboard() {
   adminMain.style.display = "block";
   loadMenuTable();
   loadOrderTable();
+  loadStats();
+  async function loadStats() {
+  const orders = await apiGet("/orders");
+
+  const revenue = orders
+    .filter(o => o.paymentStatus === "paid")
+    .reduce((sum, o) => sum + o.total, 0);
+
+  document.getElementById("statRevenue").textContent =
+    revenue.toLocaleString() + " VND";
+
+  document.getElementById("statOrders").textContent = orders.length;
+
+  document.getElementById("statCompleted").textContent =
+    orders.filter(o => o.status === "completed").length;
+
+  document.getElementById("statPending").textContent =
+    orders.filter(o => o.status === "pending").length;
+}
 }
 
 // ---- Menu: display ----
@@ -141,12 +160,14 @@ async function loadOrderTable() {
 async function updateOrderStatus(id, status) {
   await apiPut(`/orders/${id}`, { status });
   loadOrderTable();
+  loadStats();
 }
 
 async function togglePayment(id, paymentStatus) {
   try {
     await apiPut(`/orders/${id}/payment`, { paymentStatus });
     loadOrderTable();
+    loadStats();
   } catch (err) {
     alert(`Không đổi được trạng thái thanh toán: ${err.message}`);
     console.error(err);
@@ -157,4 +178,5 @@ async function deleteOrder(id) {
   if (!confirm("Delete this order?")) return;
   await apiDelete(`/orders/${id}`);
   loadOrderTable();
+  loadStats();
 }
