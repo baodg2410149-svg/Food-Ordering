@@ -50,7 +50,7 @@
     "description": "Traditional Vietnamese noodle soup with beef brisket and herbs",
     "price": 55000,
     "category": "main",
-    "image": "",
+    "image": "assets/food/pho-gau.jpg",
     "available": true
   },
   {
@@ -59,7 +59,7 @@
     "description": "Traditional Vietnamese noodle soup with beef flank and herbs",
     "price": 55000,
     "category": "main",
-    "image": "",
+    "image": "assets/food/pho-nam.jpg",
     "available": true
   },
   {
@@ -68,7 +68,7 @@
     "description": "Poached egg",
     "price": 7000,
     "category": "side",
-    "image": "",
+    "image": "assets/food/trung-tran.jpg",
     "available": true
   }
 ]
