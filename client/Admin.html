@@ -50,27 +50,45 @@
   <main id="adminMain" style="display:none">
 
     <!-- ===== STATS ===== -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <p>Total Revenue</p>
-        <h3 id="statRevenue">0</h3>
-      </div>
+<div class="stats-grid">
 
-      <div class="stat-card">
-        <p>Total Orders</p>
-        <h3 id="statOrders">0</h3>
-      </div>
-
-      <div class="stat-card">
-        <p>Completed</p>
-        <h3 id="statCompleted">0</h3>
-      </div>
-
-      <div class="stat-card">
-        <p>Pending</p>
-        <h3 id="statPending">0</h3>
-      </div>
+  <div class="stat-card">
+    <div class="stat-icon">💰</div>
+    <div class="stat-info">
+      <p>Total Revenue</p>
+      <h3 id="statRevenue">0</h3>
+      <small>From paid orders</small>
     </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon">🛒</div>
+    <div class="stat-info">
+      <p>Total Orders</p>
+      <h3 id="statOrders">0</h3>
+      <small>All orders received</small>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon">✅</div>
+    <div class="stat-info">
+      <p>Completed</p>
+      <h3 id="statCompleted">0</h3>
+      <small>Delivered to customers</small>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon">🕐</div>
+    <div class="stat-info">
+      <p>Pending</p>
+      <h3 id="statPending">0</h3>
+      <small>Waiting to be served</small>
+    </div>
+  </div>
+
+</div>
 
     <!-- ADD DISH -->
     <section class="card">
