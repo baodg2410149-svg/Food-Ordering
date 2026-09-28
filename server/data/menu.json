@@ -1,38 +1,38 @@
 [
   {
     "id": 1,
-    "name": "Phở gà",
-    "description": "Traditional Vietnamese noodle soup with chicken and herbs",
-    "price": 45000,
-    "category": "main",
-    "image": "",
-    "available": true
-  },
-  {
-    "id": 2,
     "name": "Phở bò",
     "description": "Traditional Vietnamese noodle soup with beef and herbs",
     "price": 50000,
     "category": "main",
-    "image": "",
+    "image": "assets/food/pho bo.jpg",
+    "available": true
+  },
+  {
+    "id": 2,
+    "name": "Phở gầu",
+    "description": "Traditional Vietnamese noodle soup with beef brisket and herbs",
+    "price": 55000,
+    "category": "main",
+    "image": "assets/food/pho gau.jpg",
     "available": true
   },
   {
     "id": 3,
-    "name": "Trà đá",
-    "description": "Vietnamese iced tea",
-    "price": 5000,
-    "category": "drink",
-    "image": "",
+    "name": "Phở nạm",
+    "description": "Traditional Vietnamese noodle soup with beef flank and herbs",
+    "price": 55000,
+    "category": "main",
+    "image": "assets/food/pho nam.jpg",
     "available": true
   },
   {
     "id": 4,
-    "name": "Sữa đậu nành",
-    "description": "Fresh soy milk",
-    "price": 10000,
-    "category": "drink",
-    "image": "",
+    "name": "Phở gà",
+    "description": "Traditional Vietnamese noodle soup with chicken and herbs",
+    "price": 45000,
+    "category": "main",
+    "image": "assets/food/pho ga.jpg",
     "available": true
   },
   {
@@ -41,34 +41,34 @@
     "description": "Vietnamese fried dough stick, usually eaten with phở",
     "price": 10000,
     "category": "side",
-    "image": "",
+    "image": "assets/food/quay.jpg",
     "available": true
   },
   {
     "id": 6,
-    "name": "Phở gầu",
-    "description": "Traditional Vietnamese noodle soup with beef brisket and herbs",
-    "price": 55000,
-    "category": "main",
-    "image": "assets/food/pho-gau.jpg",
-    "available": true
-  },
-  {
-    "id": 7,
-    "name": "Phở nạm",
-    "description": "Traditional Vietnamese noodle soup with beef flank and herbs",
-    "price": 55000,
-    "category": "main",
-    "image": "assets/food/pho-nam.jpg",
-    "available": true
-  },
-  {
-    "id": 8,
     "name": "Trứng trần",
     "description": "Poached egg",
     "price": 7000,
     "category": "side",
-    "image": "assets/food/trung-tran.jpg",
+    "image": "assets/food/trung tran.jpg",
+    "available": true
+  },
+  {
+    "id": 7,
+    "name": "Trà đá",
+    "description": "Vietnamese iced tea",
+    "price": 5000,
+    "category": "drink",
+    "image": "assets/food/tra da.jpg",
+    "available": true
+  },
+  {
+    "id": 8,
+    "name": "Sữa đậu nành",
+    "description": "Fresh soy milk",
+    "price": 10000,
+    "category": "drink",
+    "image": "assets/food/sua dau.jpg",
     "available": true
   }
 ]
