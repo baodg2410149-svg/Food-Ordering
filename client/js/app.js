@@ -1,7 +1,48 @@
 const menuGrid = document.getElementById("menuGrid"), cartList = document.getElementById("cartList"), totalEl = document.getElementById("total"), cartCount = document.getElementById("cartCount"), emptyCart = document.getElementById("emptyCart"), searchBox = document.getElementById("searchBox"), orderForm = document.getElementById("orderForm"), orderMessage = document.getElementById("orderMessage"), cartDrawer = document.getElementById("cartDrawer"), cartBackdrop = document.getElementById("cartBackdrop"), cartToggle = document.getElementById("cartToggle"), cartClose = document.getElementById("cartClose");
 
 // Presentation metadata only: all order values and payloads remain API-driven.
-const DISH_PRESENTATION = { 1:{englishName:"Chicken Pho",vietnameseName:"Phở gà",image:"assets/food/pho-ga.jpg"}, 2:{englishName:"Beef Pho",vietnameseName:"Phở bò",image:"assets/food/pho-bo.jpg"}, 3:{englishName:"Vietnamese Iced Tea",vietnameseName:"Trà đá",image:"assets/food/tra-da.jpg"}, 4:{englishName:"Soy Milk",vietnameseName:"Sữa đậu nành",image:"assets/food/soy-milk.webp"}, 5:{englishName:"Vietnamese Fried Dough",vietnameseName:"Quẩy",image:"assets/food/quay.jpg"}, 6:{englishName:"Brisket Pho",vietnameseName:"Phở gầu",image:""}, 7:{englishName:"Flank Pho",vietnameseName:"Phở nạm",image:""}, 8:{englishName:"Poached Egg",vietnameseName:"Trứng trần",image:""} };
+const DISH_PRESENTATION = {
+  1: {
+    englishName: "Beef Pho",
+    vietnameseName: "Phở bò",
+    image: "assets/food/pho bo.jpg"
+  },
+  2: {
+    englishName: "Brisket Pho",
+    vietnameseName: "Phở gầu",
+    image: "assets/food/pho gau.jpg"
+  },
+  3: {
+    englishName: "Flank Pho",
+    vietnameseName: "Phở nạm",
+    image: "assets/food/pho nam.jpg"
+  },
+  4: {
+    englishName: "Chicken Pho",
+    vietnameseName: "Phở gà",
+    image: "assets/food/pho ga.jpg"
+  },
+  5: {
+    englishName: "Vietnamese Fried Dough",
+    vietnameseName: "Quẩy",
+    image: "assets/food/quay.jpg"
+  },
+  6: {
+    englishName: "Poached Egg",
+    vietnameseName: "Trứng trần",
+    image: "assets/food/trung tran.jpg"
+  },
+  7: {
+    englishName: "Vietnamese Iced Tea",
+    vietnameseName: "Trà đá",
+    image: "assets/food/tra da.jpg"
+  },
+  8: {
+    englishName: "Soy Milk",
+    vietnameseName: "Sữa đậu nành",
+    image: "assets/food/sua dau.jpg"
+  }
+};
 let cart = [], activeCategory = "", searchTimer;
 const formatPrice = price => `${Number(price).toLocaleString()} VND`;
 const presentationFor = item => DISH_PRESENTATION[item.id] || {englishName:item.name,vietnameseName:item.name,image:""};
