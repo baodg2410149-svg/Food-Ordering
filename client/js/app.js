@@ -47,7 +47,37 @@ let cart = [], activeCategory = "", searchTimer;
 const formatPrice = price => `${Number(price).toLocaleString()} VND`;
 const presentationFor = item => DISH_PRESENTATION[item.id] || {englishName:item.name,vietnameseName:item.name,image:""};
 const imageFor = item => String(item.image || presentationFor(item).image || "").trim();
-async function loadMenu() { menuGrid.innerHTML = '<p class="menu-status">Preparing the menu…</p>'; const params = new URLSearchParams(); if(searchBox.value.trim()) params.set("search",searchBox.value.trim()); if(activeCategory) params.set("category",activeCategory); try { renderMenu(await apiGet(`/menu${params.toString() ? `?${params}` : ""}`)); } catch(err) { menuGrid.innerHTML = `<p class="menu-status is-error">Unable to load the menu. ${err.message}</p>`; } }
+async function loadMenu() {
+    menuGrid.innerHTML = '<p class="menu-status">Preparing the menu…</p>';
+
+    const params = new URLSearchParams();
+
+    if (activeCategory) {
+        params.set("category", activeCategory);
+    }
+
+    try {
+        let menu = await apiGet(`/menu${params.toString() ? `?${params}` : ""}`);
+
+        const search = searchBox.value.trim().toLowerCase();
+
+        if (search) {
+            menu = menu.filter(item => {
+                const p = presentationFor(item);
+
+                return (
+                    String(item.name || "").toLowerCase().includes(search) ||
+                    String(p.englishName || "").toLowerCase().includes(search) ||
+                    String(p.vietnameseName || "").toLowerCase().includes(search)
+                );
+            });
+        }
+
+        renderMenu(menu);
+    } catch (err) {
+        menuGrid.innerHTML = `<p class="menu-status is-error">Unable to load the menu. ${err.message}</p>`;
+    }
+}
 function renderMenu(menu) { menuGrid.innerHTML=""; if(!menu.length) { menuGrid.innerHTML='<p class="menu-status">No dishes match your search.</p>'; return; } menu.forEach(item => { const p=presentationFor(item), card=document.createElement("article"), imageWrap=document.createElement("div"), body=document.createElement("div"), source=imageFor(item); card.className="food-card"; imageWrap.className="food-image"; if(source) { const image=document.createElement("img"); image.src=source; image.alt=`${p.englishName} (${p.vietnameseName})`; image.loading="lazy"; image.addEventListener("error",()=>image.remove()); imageWrap.append(image); } const fallback=document.createElement("span"); fallback.className="image-fallback"; fallback.textContent=item.category === "drink" ? "◌" : "✦"; imageWrap.append(fallback); body.className="food-card-body"; const category=document.createElement("p"), title=document.createElement("h3"), vietnamese=document.createElement("p"), description=document.createElement("p"), footer=document.createElement("div"), price=document.createElement("strong"), add=document.createElement("button"); category.className="food-category"; category.textContent=item.category || "menu"; title.textContent=p.englishName; vietnamese.className="vietnamese-name"; vietnamese.textContent=p.vietnameseName; description.className="food-description"; description.textContent=item.description || "Prepared with care for your table."; footer.className="food-card-footer"; price.textContent=formatPrice(item.price); add.type="button"; add.className="add-button"; add.textContent=item.available === false ? "Unavailable" : "Add to order"; add.disabled=item.available === false; add.addEventListener("click",()=>{addToCart(item);openCart();}); footer.append(price,add); body.append(category,title,vietnamese,description,footer); card.append(imageWrap,body); menuGrid.append(card); }); }
 function addToCart(item) { const existing=cart.find(cartItem=>cartItem.id===item.id); if(existing) existing.quantity+=1; else cart.push({id:item.id,name:item.name,price:item.price,quantity:1}); renderCart(); }
 function changeQuantity(id,amount) { const item=cart.find(cartItem=>cartItem.id===id); if(!item)return; item.quantity+=amount; if(item.quantity<=0) cart=cart.filter(cartItem=>cartItem.id!==id); renderCart(); }

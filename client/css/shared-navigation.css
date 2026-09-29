@@ -1,48 +1,111 @@
 /* One navigation treatment shared by all four main pages. */
-.site-header .site-nav{justify-content:space-between;width:100%}
-.site-header .site-nav .wordmark{margin-right:auto;padding:0}
-.pho-mark,.nav-pho-mark{fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.8}.site-header .wordmark-mark.pho-mark{display:block;width:44px;height:44px;border:0;border-radius:0;color:var(--brick)}.footer-pho-mark{width:29px;height:29px;margin-right:7px;vertical-align:middle;color:var(--brick)}
-nav.shared-nav .nav-brand{display:inline-flex;align-items:center;gap:6px}.nav-pho-mark{width:25px;height:25px;color:#934836}
+
+.site-header .site-nav {
+    justify-content: space-between;
+    width: 100%
+}
+
+.site-header .site-nav .wordmark {
+    margin-right: auto;
+    padding: 0
+}
+
+.pho-mark,
+.nav-pho-mark {
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8
+}
+
+.site-header .wordmark-mark.pho-mark {
+    display: block;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 0;
+    color: var(--brick)
+}
+
+.footer-pho-mark {
+    width: 29px;
+    height: 29px;
+    margin-right: 7px;
+    vertical-align: middle;
+    color: var(--brick)
+}
+
+nav.shared-nav .nav-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px
+}
+
+.nav-pho-mark {
+    width: 25px;
+    height: 25px;
+    color: #934836
+}
 
 /* Shared primary navigation bar (used by Ordering_page, Order_tracking, Admin) */
+
 nav.shared-nav {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: clamp(14px, 3vw, 32px);
-  min-height: 54px;
-  padding: 8px 20px;
-  overflow-x: auto;
-  white-space: nowrap;
-  background: #f6efe3;
-  border-bottom: 1px solid rgba(48, 32, 24, .16);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(14px, 3vw, 32px);
+    min-height: 54px;
+    padding: 8px 20px;
+    overflow-x: auto;
+    white-space: nowrap;
+    background: #f6efe3;
+    border-bottom: 1px solid rgba(48, 32, 24, .16);
 }
 
 nav.shared-nav a {
-  position: relative;
-  padding: 9px 0;
-  color: #765e4c;
-  font-size: .7rem;
-  letter-spacing: .09em;
-  text-decoration: none;
-  text-transform: uppercase;
+    position: relative;
+    padding: 9px 0;
+    color: #765e4c;
+    font-size: .7rem;
+    letter-spacing: .09em;
+    text-decoration: none;
+    text-transform: uppercase;
 }
 
 nav.shared-nav a::after {
-  position: absolute;
-  right: 0;
-  bottom: 3px;
-  left: 0;
-  height: 2px;
-  content: "";
-  background: #934836;
-  transform: scaleX(0);
+    position: absolute;
+    right: 0;
+    bottom: 3px;
+    left: 0;
+    height: 2px;
+    content: "";
+    background: #934836;
+    transform: scaleX(0);
 }
 
-nav.shared-nav a:hover, nav.shared-nav a.is-current { color: #302018; text-decoration: none; }
-nav.shared-nav a.is-current::after { transform: scaleX(1); }
-nav.shared-nav .nav-brand { color: #302018; font-family: Georgia, serif; font-size: 1rem; letter-spacing: -.04em; text-transform: none; }
+nav.shared-nav a:hover,
+nav.shared-nav a.is-current {
+    color: #302018;
+    text-decoration: none;
+}
+
+nav.shared-nav a.is-current::after {
+    transform: scaleX(1);
+}
+
+nav.shared-nav .nav-brand {
+    color: #302018;
+    font-family: Georgia, serif;
+    font-size: 1rem;
+    letter-spacing: -.04em;
+    text-transform: none;
+}
 
 @media (max-width: 550px) {
-  nav.shared-nav { justify-content: flex-start; gap: 18px; padding-inline: 14px; }
+    nav.shared-nav {
+        justify-content: flex-start;
+        gap: 18px;
+        padding-inline: 14px;
+    }
 }
