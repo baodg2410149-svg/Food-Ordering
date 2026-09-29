@@ -1,10 +1,9 @@
-/* Editorial manifesto treatment for the Why Diners section only. */
-
+/* Editorial manifesto treatment for the Why Diners section only. */ 
 .reasons {
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    background: #d7bea3;
+    background: #d7bea3
 }
 
 .reasons::before,
@@ -12,18 +11,24 @@
     position: absolute;
     inset: 0;
     content: "";
-    pointer-events: none;
+    pointer-events: none
 }
 
 .reasons::before {
     z-index: -2;
     background: url("../assets/cultural/hanoi-hang-dao-1920s.jpg") center/cover no-repeat;
     filter: sepia(.62) contrast(.82);
-    opacity: .62;
+    opacity: .62
 }
 
 .reasons::after {
     z-index: -1;
+    background: rgba(231,215,191,.76)
+}
+
+.reasons>* {
+    position: relative;
+    z-index: 1
     background: rgba(231, 215, 191, .76);
 }
 
@@ -34,12 +39,12 @@
 
 .reasons .reason-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    column-gap: clamp(38px, 8vw, 130px);
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+    column-gap: clamp(38px,8vw,130px);
     row-gap: 0;
     margin-top: 46px;
     background: transparent;
-    border: 0;
+    border: 0
 }
 
 .reasons .reason-grid article {
@@ -48,58 +53,58 @@
     padding: 21px 0 20px;
     background: transparent;
     border: 0;
-    border-bottom: 1px solid rgba(48, 32, 24, .22);
-    transition: padding-left .24s ease, color .24s ease;
+    border-bottom: 1px solid rgba(48,32,24,.22);
+    transition: padding-left .24s ease,color .24s ease
 }
 
 .reasons .reason-grid article:nth-child(1) {
     grid-column: 1;
-    grid-row: 1;
+    grid-row: 1
 }
 
 .reasons .reason-grid article:nth-child(2) {
     grid-column: 1;
-    grid-row: 2;
+    grid-row: 2
 }
 
 .reasons .reason-grid article:nth-child(3) {
     grid-column: 1;
-    grid-row: 3;
+    grid-row: 3
 }
 
 .reasons .reason-grid article:nth-child(4) {
     grid-column: 1;
-    grid-row: 4;
+    grid-row: 4
 }
 
 .reasons .reason-grid article:nth-child(5) {
     grid-column: 1;
-    grid-row: 5;
+    grid-row: 5
 }
 
 .reasons .reason-grid article:nth-child(6) {
     grid-column: 2;
-    grid-row: 1;
+    grid-row: 1
 }
 
 .reasons .reason-grid article:nth-child(7) {
     grid-column: 2;
-    grid-row: 2;
+    grid-row: 2
 }
 
 .reasons .reason-grid article:nth-child(8) {
     grid-column: 2;
-    grid-row: 3;
+    grid-row: 3
 }
 
 .reasons .reason-grid article:nth-child(9) {
     grid-column: 2;
-    grid-row: 4;
+    grid-row: 4
 }
 
 .reasons .reason-grid article:nth-child(10) {
     grid-column: 2;
-    grid-row: 5;
+    grid-row: 5
 }
 
 .reasons .reason-grid b {
@@ -107,22 +112,33 @@
     width: 43px;
     margin: 0;
     color: #934836;
-    font-family: Georgia, serif;
+    font-family: Georgia,serif;
     font-size: .82rem;
     letter-spacing: .04em;
-    vertical-align: top;
+    vertical-align: top
 }
 
 .reasons .reason-grid h3 {
     display: inline-block;
     width: calc(100% - 50px);
     margin: 0;
-    font-size: clamp(1.15rem, 1.7vw, 1.42rem);
-    line-height: 1.05;
+    font-size: clamp(1.15rem,1.7vw,1.42rem);
+    line-height: 1.05
 }
 
 .reasons .reason-grid article:hover {
     padding-left: 9px;
+    color: #6d3428
+}
+
+.reasons .reason-grid article:hover b {
+    color: #6d3428
+}
+
+@media(max-width:800px) {
+    .reasons .reason-grid {
+        grid-template-columns: 1fr;
+        column-gap: 0
     color: #6d3428;
 }
 
@@ -138,6 +154,13 @@
 
     .reasons .reason-grid article:nth-child(n) {
         grid-column: 1;
+        grid-row: auto
+    }
+}
+
+@media(prefers-reduced-motion:reduce) {
+    .reasons .reason-grid article {
+        transition: none
         grid-row: auto;
     }
 }
