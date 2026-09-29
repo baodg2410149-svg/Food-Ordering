@@ -29,6 +29,12 @@
 .reasons>* {
     position: relative;
     z-index: 1
+    background: rgba(231, 215, 191, .76);
+}
+
+.reasons > * {
+    position: relative;
+    z-index: 1;
 }
 
 .reasons .reason-grid {
@@ -133,6 +139,17 @@
     .reasons .reason-grid {
         grid-template-columns: 1fr;
         column-gap: 0
+    color: #6d3428;
+}
+
+.reasons .reason-grid article:hover b {
+    color: #6d3428;
+}
+
+@media (max-width: 800px) {
+    .reasons .reason-grid {
+        grid-template-columns: 1fr;
+        column-gap: 0;
     }
 
     .reasons .reason-grid article:nth-child(n) {
@@ -144,5 +161,12 @@
 @media(prefers-reduced-motion:reduce) {
     .reasons .reason-grid article {
         transition: none
+        grid-row: auto;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reasons .reason-grid article {
+        transition: none;
     }
 }

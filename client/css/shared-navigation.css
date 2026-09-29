@@ -102,6 +102,14 @@ nav.shared-nav .nav-brand {
     text-transform: none;
 }
 
+.vietnamese-name {
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif !important;
+  font-style: normal !important;
+  letter-spacing: 0 !important;
+  word-spacing: 0 !important;
+  font-kerning: normal;
+}
+
 @media (max-width: 550px) {
     nav.shared-nav {
         justify-content: flex-start;
