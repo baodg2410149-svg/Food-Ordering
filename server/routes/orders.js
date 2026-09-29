@@ -4,9 +4,20 @@ const { readData, writeData, nextId } = require("../utils/db");
 const { requireAdmin } = require("../middleware/adminAuth");
 
 const FILE = "orders.json";
+const REVENUE_FILE = "revenue.json";
 const VALID_STATUSES = ["pending", "preparing", "delivering", "completed", "cancelled"];
 const VALID_PAYMENT_STATUSES = ["unpaid", "paid"];
-const ESTIMATED_DELIVERY_MINUTES = { min: 25, max: 35 };
+
+// Local calendar date (YYYY-MM-DD), not UTC. Using toISOString() here
+// would take the UTC date instead, which is a different calendar day
+// than Vietnam's for roughly 7 hours around midnight (UTC+7).
+function todayKey() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
 
 // GET /api/orders - (admin) view all orders
 router.get("/", requireAdmin, (req, res) => {
@@ -14,7 +25,25 @@ router.get("/", requireAdmin, (req, res) => {
   res.json(orders);
 });
 
+// GET /api/orders/revenue/today - (admin) today's recorded revenue.
+// This reads from revenue.json, NOT from the live orders list, so
+// deleting a completed/paid order afterwards does not change it.
+router.get("/revenue/today", requireAdmin, (req, res) => {
+  const revenue = readData(REVENUE_FILE, "{}");
+  const key = todayKey();
+  res.json({ date: key, total: revenue[key] || 0 });
+});
+
+// GET /api/orders/revenue/history - (admin) the full day -> total map,
+// used to draw the "last 7 days" revenue chart without it being
+// affected by orders that were deleted after being paid.
+router.get("/revenue/history", requireAdmin, (req, res) => {
+  res.json(readData(REVENUE_FILE, "{}"));
+});
+
 // GET /api/orders/:id - look up a single order by id
+// IMPORTANT: this must come AFTER the two /revenue/* routes above,
+// otherwise Express would treat "revenue" as an :id value here.
 router.get("/:id", (req, res) => {
   const orders = readData(FILE);
   const order = orders.find((o) => o.id === Number(req.params.id));
@@ -23,7 +52,6 @@ router.get("/:id", (req, res) => {
 });
 
 // POST /api/orders - customer places a new order
-// body: { customerName, tableNumber, items: [{ id, name, price, quantity }] }
 router.post("/", (req, res) => {
   const { customerName, tableNumber, items } = req.body;
 
@@ -34,7 +62,6 @@ router.post("/", (req, res) => {
   const total = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
 
   const orders = readData(FILE);
-  const createdAt = new Date();
   const newOrder = {
     id: nextId(orders),
     customerName,
@@ -42,16 +69,9 @@ router.post("/", (req, res) => {
     items,
     total,
     status: "pending",
-    paymentStatus: "unpaid", // every new order starts unpaid until admin marks it
-    createdAt: createdAt.toISOString(),
-    statusUpdatedAt: createdAt.toISOString(),
-    statusHistory: [{ status: "pending", at: createdAt.toISOString() }],
-    estimatedDeliveryStartAt: new Date(
-      createdAt.getTime() + ESTIMATED_DELIVERY_MINUTES.min * 60 * 1000
-    ).toISOString(),
-    estimatedDeliveryEndAt: new Date(
-      createdAt.getTime() + ESTIMATED_DELIVERY_MINUTES.max * 60 * 1000
-    ).toISOString(),
+    paymentStatus: "unpaid",
+    revenueRecordedOn: null, // which day's revenue bucket this order's total was added to, if any
+    createdAt: new Date().toISOString(),
   };
 
   orders.push(newOrder);
@@ -60,7 +80,6 @@ router.post("/", (req, res) => {
 });
 
 // PUT /api/orders/:id - (admin) update order kitchen status
-// body: { status: "preparing" }
 router.put("/:id", requireAdmin, (req, res) => {
   const { status } = req.body;
 
@@ -77,26 +96,20 @@ router.put("/:id", requireAdmin, (req, res) => {
     return res.status(404).json({ error: "Order not found" });
   }
 
-  const updatedAt = new Date().toISOString();
-  const history = Array.isArray(orders[index].statusHistory)
-    ? orders[index].statusHistory
-    : orders[index].createdAt
-    ? [{ status: orders[index].status || "pending", at: orders[index].createdAt }]
-    : [];
-
-  if (orders[index].status !== status) {
-    history.push({ status, at: updatedAt });
-  }
-
   orders[index].status = status;
-  orders[index].statusUpdatedAt = updatedAt;
-  orders[index].statusHistory = history;
   writeData(FILE, orders);
   res.json(orders[index]);
 });
 
-// PUT /api/orders/:id/payment - (admin) toggle payment status independently
-// body: { paymentStatus: "paid" }
+// PUT /api/orders/:id/payment - (admin) toggle payment status
+// This is the only place that writes to revenue.json:
+// - marking "paid" for the first time adds the order's total to
+//   TODAY's bucket, and remembers which day it was recorded on.
+// - marking "unpaid" (correcting a mistake) subtracts it back from
+//   whichever day it was recorded on, so the books stay accurate.
+// - toggling paid -> unpaid -> paid again on the SAME order never
+//   double-counts, because revenueRecordedOn tracks whether it is
+//   currently counted.
 router.put("/:id/payment", requireAdmin, (req, res) => {
   const { paymentStatus } = req.body;
 
@@ -113,12 +126,29 @@ router.put("/:id/payment", requireAdmin, (req, res) => {
     return res.status(404).json({ error: "Order not found" });
   }
 
-  orders[index].paymentStatus = paymentStatus;
+  const order = orders[index];
+  const revenue = readData(REVENUE_FILE, "{}");
+
+  if (paymentStatus === "paid" && !order.revenueRecordedOn) {
+    const key = todayKey();
+    revenue[key] = (revenue[key] || 0) + Number(order.total);
+    order.revenueRecordedOn = key;
+    writeData(REVENUE_FILE, revenue);
+  } else if (paymentStatus === "unpaid" && order.revenueRecordedOn) {
+    const key = order.revenueRecordedOn;
+    revenue[key] = Math.max(0, (revenue[key] || 0) - Number(order.total));
+    order.revenueRecordedOn = null;
+    writeData(REVENUE_FILE, revenue);
+  }
+
+  order.paymentStatus = paymentStatus;
   writeData(FILE, orders);
-  res.json(orders[index]);
+  res.json(order);
 });
 
-// DELETE /api/orders/:id - (admin) remove a single order
+// DELETE /api/orders/:id - (admin) remove a single order.
+// Deliberately does NOT touch revenue.json - a day's recorded
+// revenue must survive its orders being deleted.
 router.delete("/:id", requireAdmin, (req, res) => {
   const orders = readData(FILE);
   const filtered = orders.filter((o) => o.id !== Number(req.params.id));

@@ -5,6 +5,7 @@ const path = require("path");
 const menuRoutes = require("./routes/menu");
 const orderRoutes = require("./routes/orders");
 const { ADMIN_KEY } = require("./middleware/adminAuth");
+const { readData, writeData } = require("./utils/db");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -41,6 +42,46 @@ app.get("/api/health", (req, res) => {
 app.get("/", (req, res) => {
   res.redirect("/Ordering_page.html");
 });
+
+// One-time migration: orders that were marked "paid" BEFORE the
+// revenue.json tracking feature existed have no revenueRecordedOn,
+// so their money was never added to any day's revenue bucket.
+// This backfills them once, using each order's createdAt date as
+// the best guess for which day to credit. Safe to run every startup:
+// an order only gets backfilled once, because revenueRecordedOn gets
+// set afterwards and this function skips orders that already have it.
+function migrateUnrecordedRevenue() {
+  const orders = readData("orders.json");
+  const revenue = readData("revenue.json", "{}");
+  let changed = false;
+
+  orders.forEach((order) => {
+    if (order.paymentStatus === "paid" && !order.revenueRecordedOn) {
+      const key = order.createdAt ? localDateKey(new Date(order.createdAt)) : localDateKey();
+      revenue[key] = (revenue[key] || 0) + Number(order.total);
+      order.revenueRecordedOn = key;
+      changed = true;
+    }
+  });
+
+  if (changed) {
+    writeData("orders.json", orders);
+    writeData("revenue.json", revenue);
+    console.log("Backfilled revenue.json from previously-paid orders.");
+  }
+}
+
+migrateUnrecordedRevenue();
+
+// Same local-date logic as todayKey() in routes/orders.js - kept in
+// sync so a migrated order lands in the same bucket a fresh payment
+// would use.
+function localDateKey(date = new Date()) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

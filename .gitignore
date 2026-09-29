@@ -3,3 +3,5 @@ server/node_modules/
 
 # Runtime order data — generated per-machine, must NOT be committed
 server/data/orders.json
+
+server/data/revenue.json

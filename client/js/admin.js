@@ -21,24 +21,34 @@ const loginError = document.getElementById("loginError");
 const adminKeyInput = document.getElementById("adminKeyInput");
 const togglePassword = document.getElementById("togglePassword");
 
+// ============================================================
+// LOGIN
+// ============================================================
+
 togglePassword.addEventListener("click", () => {
   const isHidden = adminKeyInput.type === "password";
   adminKeyInput.type = isHidden ? "text" : "password";
   togglePassword.textContent = isHidden ? "🙈" : "👁";
 });
 
-if (sessionStorage.getItem("adminKey")) showDashboard();
+// If admin key already exists in this browser session, skip straight
+// to the dashboard.
+if (sessionStorage.getItem("adminKey")) {
+  showDashboard();
+}
 
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   loginError.textContent = "";
   const key = adminKeyInput.value;
+
   try {
     const res = await fetch(`${API_BASE}/admin/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ key })
     });
+
     if (res.ok) {
       sessionStorage.setItem("adminKey", key);
       showDashboard();
@@ -51,9 +61,14 @@ loginForm.addEventListener("submit", async (e) => {
   }
 });
 
+// ============================================================
+// SHOW DASHBOARD
+// ============================================================
+
 function showDashboard() {
   loginSection.style.display = "none";
   adminMain.style.display = "block";
+
   loadMenuTable();
   loadOrderTable();
   loadStats();
@@ -65,31 +80,51 @@ function showDashboard() {
 
 const chartModeToggle = document.getElementById("chartModeToggle");
 const salesChart = document.getElementById("salesChart");
-chartModeToggle.addEventListener("change", () => renderChart(allOrders));
+chartModeToggle.addEventListener("change", () => renderChart());
+
+// Cached separately from allOrders because revenue must survive
+// deleted orders - it comes from the server's persistent revenue
+// log (revenue.json), not from summing whatever orders currently
+// still exist.
+let todayRevenue = 0;
+let revenueHistory = {};
 
 async function loadStats() {
   try {
-    const orders = await apiGet("/orders");
+    const [orders, todayRev, history] = await Promise.all([
+      apiGet("/orders"),
+      apiGet("/orders/revenue/today"),
+      apiGet("/orders/revenue/history"),
+    ]);
+
     allOrders = orders;
+    todayRevenue = todayRev.total;
+    revenueHistory = history;
 
-    const revenue = orders
-      .filter((o) => o.paymentStatus === "paid")
-      .reduce((sum, o) => sum + Number(o.total), 0);
-
-    document.getElementById("statRevenue").textContent = revenue.toLocaleString() + " VND";
+    document.getElementById("statRevenue").textContent = todayRevenue.toLocaleString() + " VND";
     document.getElementById("statOrders").textContent = orders.length;
     document.getElementById("statCompleted").textContent = orders.filter((o) => o.status === "completed").length;
     document.getElementById("statPending").textContent = orders.filter((o) => o.status === "pending").length;
 
-    renderChart(orders);
+    renderChart();
   } catch (err) {
     console.error("Failed to load statistics:", err);
   }
 }
 
-// Builds { label, revenue, count } for each of the last 7 days
-// (including today), using each order's createdAt date.
-function buildLast7DaysStats(orders) {
+// Same local-date key logic as the server (routes/orders.js todayKey),
+// so the keys here match the keys revenue.json was actually written
+// under. Using toISOString() would compute the UTC date instead,
+// which drifts a day off from Vietnam's calendar date for part of
+// each day (UTC+7).
+function localDateKey(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function buildLast7DaysStats() {
   const days = [];
   for (let i = 6; i >= 0; i--) {
     const d = new Date();
@@ -99,19 +134,18 @@ function buildLast7DaysStats(orders) {
   }
 
   return days.map((day) => {
-    const key = day.toISOString().slice(0, 10);
-    const dayOrders = orders.filter((o) => String(o.createdAt || "").slice(0, 10) === key);
-    const revenue = dayOrders.filter((o) => o.paymentStatus === "paid").reduce((s, o) => s + Number(o.total), 0);
+    const key = localDateKey(day);
+    const dayOrders = allOrders.filter((o) => o.createdAt && localDateKey(new Date(o.createdAt)) === key);
     return {
       label: `${String(day.getDate()).padStart(2, "0")}/${String(day.getMonth() + 1).padStart(2, "0")}`,
-      revenue,
-      count: dayOrders.length
+      revenue: revenueHistory[key] || 0,
+      count: dayOrders.length,
     };
   });
 }
 
-function renderChart(orders) {
-  const stats = buildLast7DaysStats(orders);
+function renderChart() {
+  const stats = buildLast7DaysStats();
   const showOrders = chartModeToggle.checked;
   const values = stats.map((s) => (showOrders ? s.count : s.revenue));
   const max = Math.max(...values, 1);
