@@ -43,6 +43,14 @@ nav.shared-nav a:hover, nav.shared-nav a.is-current { color: #302018; text-decor
 nav.shared-nav a.is-current::after { transform: scaleX(1); }
 nav.shared-nav .nav-brand { color: #302018; font-family: Georgia, serif; font-size: 1rem; letter-spacing: -.04em; text-transform: none; }
 
+.vietnamese-name {
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif !important;
+  font-style: normal !important;
+  letter-spacing: 0 !important;
+  word-spacing: 0 !important;
+  font-kerning: normal;
+}
+
 @media (max-width: 550px) {
   nav.shared-nav { justify-content: flex-start; gap: 18px; padding-inline: 14px; }
 }

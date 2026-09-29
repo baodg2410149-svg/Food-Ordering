@@ -21,14 +21,14 @@ const POLL_INTERVAL = 20000;
 const MAX_POLL_ERRORS = 3;
 
 const DISH_PRESENTATION = {
-  1: { englishName: "Chicken Pho", vietnameseName: "Phở gà", image: "assets/food/pho-ga.jpg" },
-  2: { englishName: "Beef Pho", vietnameseName: "Phở bò", image: "assets/food/pho-bo.jpg" },
-  3: { englishName: "Vietnamese Iced Tea", vietnameseName: "Trà đá", image: "assets/food/tra-da.jpg" },
-  4: { englishName: "Soy Milk", vietnameseName: "Sữa đậu nành", image: "assets/food/soy-milk.webp" },
+  1: { englishName: "Beef Pho", vietnameseName: "Phở bò", image: "assets/food/pho bo.jpg" },
+  2: { englishName: "Brisket Pho", vietnameseName: "Phở gầu", image: "assets/food/pho gau.jpg" },
+  3: { englishName: "Flank Pho", vietnameseName: "Phở nạm", image: "assets/food/pho nam.jpg" },
+  4: { englishName: "Chicken Pho", vietnameseName: "Phở gà", image: "assets/food/pho ga.jpg" },
   5: { englishName: "Vietnamese Fried Dough", vietnameseName: "Quẩy", image: "assets/food/quay.jpg" },
-  6: { englishName: "Brisket Pho", vietnameseName: "Phở gầu", image: "" },
-  7: { englishName: "Flank Pho", vietnameseName: "Phở nạm", image: "" },
-  8: { englishName: "Poached Egg", vietnameseName: "Trứng trần", image: "" },
+  6: { englishName: "Poached Egg", vietnameseName: "Trứng trần", image: "assets/food/trung tran.jpg" },
+  7: { englishName: "Vietnamese Iced Tea", vietnameseName: "Trà đá", image: "assets/food/tra da.jpg" },
+  8: { englishName: "Soy Milk", vietnameseName: "Sữa đậu nành", image: "assets/food/sua dau.jpg" },
 };
 
 const TRACKING_STAGES = [
@@ -539,10 +539,22 @@ function parseDate(value) {
 }
 
 function presentationFor(item) {
-  return DISH_PRESENTATION[item.id] || {
-    englishName: item.name || "Menu item",
-    vietnameseName: item.name || "Menu item",
-    image: "",
+  const presentation = DISH_PRESENTATION[item.id] || {};
+  const vietnameseNames = {
+    1: "Ph\u1edf b\u00f2",
+    2: "Ph\u1edf g\u1ea7u",
+    3: "Ph\u1edf n\u1ea1m",
+    4: "Ph\u1edf g\u00e0",
+    5: "Qu\u1ea9y",
+    6: "Tr\u1ee9ng tr\u1ea7n",
+    7: "Tr\u00e0 \u0111\u00e1",
+    8: "S\u1eefa \u0111\u1eadu n\u00e0nh",
+  };
+
+  return {
+    englishName: presentation.englishName || item.name || "Menu item",
+    vietnameseName: vietnameseNames[item.id] || item.name || "Menu item",
+    image: item.image || presentation.image || "",
   };
 }
 
