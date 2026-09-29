@@ -29,7 +29,13 @@
   <div class="cart-backdrop" id="cartBackdrop" hidden></div>
   <aside class="cart-drawer" id="cartDrawer" aria-labelledby="cartTitle" aria-hidden="true">
     <div class="cart-drawer-head"><div><p class="eyebrow">Your selections</p><h2 id="cartTitle">Your order</h2></div><button class="icon-button" id="cartClose" type="button" aria-label="Close your order">×</button></div>
-    <ul class="cart-list" id="cartList" aria-live="polite"></ul><p class="empty-cart" id="emptyCart">Your chosen dishes will appear here.</p><div class="cart-total"><span>Total</span><strong id="total">0 VND</strong></div>
+    <ul class="cart-list" id="cartList" aria-live="polite"></ul>
+    <div class="empty-cart" id="emptyCart">
+      <span class="empty-cart-icon" aria-hidden="true">🥣</span>
+      <p>Your bowl is empty for now.</p>
+      <p class="empty-cart-hint">Browse the menu and tap "Add to order" on a dish you like.</p>
+    </div>
+    <div class="cart-total"><span>Total</span><strong id="total">0 VND</strong></div>
     <form id="orderForm" class="checkout-form"><h3>Complete your order</h3><label for="customerName">Your name<input type="text" id="customerName" placeholder="How should we call you?" required autocomplete="name"></label><label for="tableNumber">Table number <span>Optional</span><input type="text" id="tableNumber" placeholder="e.g. 12"></label><button class="primary-button" type="submit">Place order <span aria-hidden="true">→</span></button><div id="orderMessage" class="order-message" role="status" aria-live="polite"></div></form>
   </aside>
   <footer class="site-footer"><span><svg class="footer-pho-mark pho-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M22 30c-5-6 1-10 2-16s-2-8 0-12M32 30c-4-6 2-11 2-17s-3-7 0-11M42 30c4-6-2-10-1-16s3-7 0-11"/><path d="M12 38c7-4 33-4 40 0M15 40c2 10 8 17 17 18h1c9-1 15-8 17-18M20 38c3-2 5 2 8 0s5-2 8 0 5-2 8 0M24 61h16"/></svg><strong>Phở Việt</strong> · Hanoi pho kitchen</span><span>A Hanoi Tradition, Served All Day.</span></footer>
