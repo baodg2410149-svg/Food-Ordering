@@ -1,138 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Admin Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
-<aside class="sidebar">
-  <div class="logo">Phở Admin</div>
-  <nav>
-    <a href="Home.html"><span>Home</span></a>
-    <a href="Ordering_page.html"><span>Orders</span></a>
-    <a href="Order_tracking.html"><span>Tracking</span></a>
-    <a class="active" href="Admin.html"><span>Admin</span></a>
-  </nav>
-</aside>
+  <aside class="sidebar">
+    <div class="logo">Phở Admin</div>
+    <nav>
+      <a href="Home.html"><span>Home</span></a>
+      <a href="Ordering_page.html"><span>Orders</span></a>
+      <a href="Order_tracking.html"><span>Tracking</span></a>
+      <a class="active" href="Admin.html"><span>Admin</span></a>
+    </nav>
+  </aside>
 
-<div class="main">
-  <header class="topbar">
-    <h1>Dashboard</h1>
-    <p>Manage your restaurant system</p>
-  </header>
+  <div class="main">
+    <header class="topbar">
+      <h1>Dashboard</h1>
+      <p>Manage your restaurant system</p>
+    </header>
 
-  <section id="loginSection" class="card">
-    <h2>Admin Login</h2>
-    <form id="loginForm">
-      <label>Admin Key</label>
-      <div class="password-wrapper">
-        <input type="password" id="adminKeyInput" required>
-        <button type="button" id="togglePassword">👁</button>
-      </div>
-      <div id="loginError" class="field-error"></div>
-      <button type="submit">Login</button>
-    </form>
-  </section>
-
-  <main id="adminMain" style="display:none">
-
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon">💰</div>
-        <div class="stat-info"><p>Total Revenue</p><h3 id="statRevenue">0</h3><small>From paid orders</small></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">🛒</div>
-        <div class="stat-info"><p>Total Orders</p><h3 id="statOrders">0</h3><small>All orders received</small></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">✅</div>
-        <div class="stat-info"><p>Completed</p><h3 id="statCompleted">0</h3><small>Delivered to customers</small></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">🕐</div>
-        <div class="stat-info"><p>Pending</p><h3 id="statPending">0</h3><small>Waiting to be served</small></div>
-      </div>
-    </div>
-
-    <!-- SALES OVERVIEW -->
-    <section class="card">
-      <h2>Sales Overview</h2>
-      <label class="chart-toggle-row">
-        <input type="checkbox" id="chartModeToggle">
-        Show orders instead of revenue (last 7 days)
-      </label>
-      <div class="chart-bars" id="salesChart"></div>
-    </section>
-
-    <!-- ADD DISH (collapsible) -->
-    <section class="card" id="addMenuFormWrapper" hidden>
-      <h2>Add New Dish</h2>
-      <form id="addMenuForm">
-        <input type="text" id="mName" placeholder="Dish name" required>
-        <input type="text" id="mDesc" placeholder="Description">
-        <input type="number" id="mPrice" placeholder="Price" required>
-        <input type="text" id="mCategory" placeholder="Category">
-        <button type="submit">Add Dish</button>
-        <div id="menuMessage"></div>
+    <section id="loginSection" class="card">
+      <h2>Admin Login</h2>
+      <form id="loginForm">
+        <label>Admin Key</label>
+        <div class="password-wrapper">
+          <input type="password" id="adminKeyInput" required>
+          <button type="button" id="togglePassword">👁</button>
+        </div>
+        <div id="loginError" class="field-error"></div>
+        <button type="submit">Login</button>
       </form>
     </section>
 
-    <!-- MENU -->
-    <section class="card">
-      <h2>Menu List</h2>
-      <div class="table-toolbar">
-        <input type="text" id="menuSearchInput" placeholder="Search dishes...">
-        <select id="menuCategoryFilter">
-          <option value="">All categories</option>
-          <option value="main">Main</option>
-          <option value="side">Side</option>
-          <option value="drink">Drink</option>
-        </select>
-        <button type="button" class="toolbar-add-btn" id="addDishToggle">+ Add Dish</button>
+    <main id="adminMain" style="display:none">
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">💰</div>
+          <div class="stat-info">
+            <p>Total Revenue</p>
+            <h3 id="statRevenue">0</h3><small>From paid orders</small>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🛒</div>
+          <div class="stat-info">
+            <p>Total Orders</p>
+            <h3 id="statOrders">0</h3><small>All orders received</small>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-info">
+            <p>Completed</p>
+            <h3 id="statCompleted">0</h3><small>Delivered to customers</small>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🕐</div>
+          <div class="stat-info">
+            <p>Pending</p>
+            <h3 id="statPending">0</h3><small>Waiting to be served</small>
+          </div>
+        </div>
       </div>
-      <table>
-        <thead>
-          <tr><th>ID</th><th>Name</th><th>Price</th><th>Category</th><th>Actions</th></tr>
-        </thead>
-        <tbody id="menuTableBody"></tbody>
-      </table>
-    </section>
 
-    <!-- ORDERS -->
-    <section class="card">
-      <h2>Order List</h2>
-      <div class="table-toolbar">
-        <input type="text" id="orderSearchInput" placeholder="Search order # or customer...">
-        <select id="orderStatusFilter">
-          <option value="">All statuses</option>
-          <option value="pending">Pending</option>
-          <option value="preparing">Preparing</option>
-          <option value="delivering">Delivering</option>
-          <option value="completed">Completed</option>
-          <option value="cancelled">Cancelled</option>
-        </select>
-        <select id="orderPaymentFilter">
-          <option value="">All payments</option>
-          <option value="paid">Paid</option>
-          <option value="unpaid">Unpaid</option>
-        </select>
-      </div>
-      <table>
-        <thead>
-          <tr><th>ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Payment</th><th>Action</th></tr>
-        </thead>
-        <tbody id="orderTableBody"></tbody>
-      </table>
-    </section>
+      <!-- SALES OVERVIEW -->
+      <section class="card">
+        <h2>Sales Overview</h2>
+        <label class="chart-toggle-row">
+          <input type="checkbox" id="chartModeToggle">
+          Show orders instead of revenue (last 7 days)
+        </label>
+        <div class="chart-bars" id="salesChart"></div>
+      </section>
 
-  </main>
-</div>
+      <!-- ADD DISH (collapsible) -->
+      <section class="card" id="addMenuFormWrapper" hidden>
+        <h2>Add New Dish</h2>
+        <form id="addMenuForm">
+          <input type="text" id="mName" placeholder="Dish name" required>
+          <input type="text" id="mDesc" placeholder="Description">
+          <input type="number" id="mPrice" placeholder="Price" required>
+          <input type="text" id="mCategory" placeholder="Category">
+          <button type="submit">Add Dish</button>
+          <div id="menuMessage"></div>
+        </form>
+      </section>
 
-<script src="js/api.js"></script>
-<script src="js/admin.js"></script>
+      <!-- MENU -->
+      <section class="card">
+        <h2>Menu List</h2>
+        <div class="table-toolbar">
+          <input type="text" id="menuSearchInput" placeholder="Search dishes...">
+          <select id="menuCategoryFilter">
+            <option value="">All categories</option>
+            <option value="main">Main</option>
+            <option value="side">Side</option>
+            <option value="drink">Drink</option>
+          </select>
+          <button type="button" class="toolbar-add-btn" id="addDishToggle">+ Add Dish</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Category</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="menuTableBody"></tbody>
+        </table>
+      </section>
+
+      <!-- ORDERS -->
+      <section class="card">
+        <h2>Order List</h2>
+        <div class="table-toolbar">
+          <input type="text" id="orderSearchInput" placeholder="Search order # or customer...">
+          <select id="orderStatusFilter">
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="preparing">Preparing</option>
+            <option value="delivering">Delivering</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <select id="orderPaymentFilter">
+            <option value="">All payments</option>
+            <option value="paid">Paid</option>
+            <option value="unpaid">Unpaid</option>
+          </select>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Customer</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Payment</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="orderTableBody"></tbody>
+        </table>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/admin.js"></script>
 </body>
+
 </html>

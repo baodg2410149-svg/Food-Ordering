@@ -1,6 +1,4 @@
-// ============================================================
 // ADMIN DASHBOARD
-// ============================================================
 
 const menuMessage = document.getElementById("menuMessage");
 const menuTableBody = document.getElementById("menuTableBody");
@@ -21,9 +19,7 @@ const loginError = document.getElementById("loginError");
 const adminKeyInput = document.getElementById("adminKeyInput");
 const togglePassword = document.getElementById("togglePassword");
 
-// ============================================================
 // LOGIN
-// ============================================================
 
 togglePassword.addEventListener("click", () => {
   const isHidden = adminKeyInput.type === "password";
@@ -61,9 +57,7 @@ loginForm.addEventListener("submit", async (e) => {
   }
 });
 
-// ============================================================
 // SHOW DASHBOARD
-// ============================================================
 
 function showDashboard() {
   loginSection.style.display = "none";
@@ -74,9 +68,7 @@ function showDashboard() {
   loadStats();
 }
 
-// ============================================================
 // STATISTICS + SALES CHART
-// ============================================================
 
 const chartModeToggle = document.getElementById("chartModeToggle");
 const salesChart = document.getElementById("salesChart");
@@ -173,9 +165,7 @@ function renderChart() {
   });
 }
 
-// ============================================================
 // MENU - DISPLAY / SEARCH / FILTER
-// ============================================================
 
 const menuSearchInput = document.getElementById("menuSearchInput");
 const menuCategoryFilter = document.getElementById("menuCategoryFilter");
@@ -291,9 +281,7 @@ addMenuForm.addEventListener("submit", async (e) => {
   }
 });
 
-// ============================================================
 // ORDERS - DISPLAY / SEARCH / FILTER
-// ============================================================
 
 const orderSearchInput = document.getElementById("orderSearchInput");
 const orderStatusFilter = document.getElementById("orderStatusFilter");

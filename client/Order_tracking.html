@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,9 +9,14 @@
   <link rel="stylesheet" href="css/shared-navigation.css">
   <link rel="stylesheet" href="css/order-tracking.css">
 </head>
+
 <body>
   <nav class="shared-nav" aria-label="Primary navigation">
-    <a class="nav-brand" href="Home.html"><svg class="nav-pho-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M22 30c-5-6 1-10 2-16s-2-8 0-12M32 30c-4-6 2-11 2-17s-3-7 0-11M42 30c4-6-2-10-1-16s3-7 0-11"/><path d="M12 38c7-4 33-4 40 0M15 40c2 10 8 17 17 18h1c9-1 15-8 17-18M20 38c3-2 5 2 8 0s5-2 8 0 5-2 8 0M24 61h16"/></svg><span>Phở Việt</span></a>
+    <a class="nav-brand" href="Home.html"><svg class="nav-pho-mark" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M22 30c-5-6 1-10 2-16s-2-8 0-12M32 30c-4-6 2-11 2-17s-3-7 0-11M42 30c4-6-2-10-1-16s3-7 0-11" />
+        <path
+          d="M12 38c7-4 33-4 40 0M15 40c2 10 8 17 17 18h1c9-1 15-8 17-18M20 38c3-2 5 2 8 0s5-2 8 0 5-2 8 0M24 61h16" />
+      </svg><span>Phở Việt</span></a>
     <a href="Home.html">Home</a>
     <a href="Ordering_page.html">Order</a>
     <a class="is-current" href="Order_tracking.html" aria-current="page">Track Order</a>
@@ -27,7 +33,8 @@
       <form id="trackForm" class="tracking-form" novalidate>
         <label for="orderId">Order Number</label>
         <div class="tracking-search-row">
-          <input type="text" id="orderId" inputmode="numeric" autocomplete="off" placeholder="eg.1,2,3..." aria-describedby="trackMessage">
+          <input type="text" id="orderId" inputmode="numeric" autocomplete="off" placeholder="eg.1,2,3..."
+            aria-describedby="trackMessage">
           <button id="trackButton" class="primary-button" type="submit">Track Order</button>
         </div>
         <div id="trackMessage" class="tracking-message" role="status" aria-live="polite"></div>
@@ -96,9 +103,14 @@
     </form>
   </aside>
 
-  <footer class="site-footer"><span><svg class="footer-pho-mark pho-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M22 30c-5-6 1-10 2-16s-2-8 0-12M32 30c-4-6 2-11 2-17s-3-7 0-11M42 30c4-6-2-10-1-16s3-7 0-11"/><path d="M12 38c7-4 33-4 40 0M15 40c2 10 8 17 17 18h1c9-1 15-8 17-18M20 38c3-2 5 2 8 0s5-2 8 0 5-2 8 0M24 61h16"/></svg><strong>Phở Việt</strong> · Hanoi pho kitchen</span><span>A Hanoi Tradition, Served All Day.</span></footer>
+  <footer class="site-footer"><span><svg class="footer-pho-mark pho-mark" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M22 30c-5-6 1-10 2-16s-2-8 0-12M32 30c-4-6 2-11 2-17s-3-7 0-11M42 30c4-6-2-10-1-16s3-7 0-11" />
+        <path
+          d="M12 38c7-4 33-4 40 0M15 40c2 10 8 17 17 18h1c9-1 15-8 17-18M20 38c3-2 5 2 8 0s5-2 8 0 5-2 8 0M24 61h16" />
+      </svg><strong>Phở Việt</strong> · Hanoi pho kitchen</span><span>A Hanoi Tradition, Served All Day.</span></footer>
 
   <script src="js/api.js"></script>
   <script src="js/tracking.js"></script>
 </body>
+
 </html>

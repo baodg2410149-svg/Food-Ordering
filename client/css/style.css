@@ -43,7 +43,7 @@ body {
 
 .sidebar a:hover,
 .sidebar a.active {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   color: white;
 }
 
@@ -53,12 +53,12 @@ body {
   transition: 0.4s;
 }
 
-.sidebar:hover ~ .main {
+.sidebar:hover~.main {
   margin-left: 240px;
 }
 
 .card {
-  background: rgba(255,255,255,0.8);
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   padding: 25px;
   border-radius: 16px;
@@ -87,7 +87,8 @@ table {
   border-collapse: collapse;
 }
 
-td, th {
+td,
+th {
   padding: 12px;
   border-bottom: 1px solid #eee;
 }
@@ -110,22 +111,28 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-input, button, select, textarea {
+input,
+button,
+select,
+textarea {
   font-family: inherit;
   font-size: 15px;
   letter-spacing: 0.01em;
 }
+
 .sidebar .logo {
   font-family: 'Playfair Display', serif;
   font-size: 24px;
   font-weight: 600;
   letter-spacing: 0.02em;
 }
+
 .sidebar nav a {
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.04em;
 }
+
 .topbar h1 {
   font-family: 'Playfair Display', serif;
   font-size: 40px;
@@ -134,11 +141,13 @@ input, button, select, textarea {
   letter-spacing: -0.01em;
   margin-bottom: 6px;
 }
+
 .topbar p {
   font-size: 16px;
   font-weight: 300;
   letter-spacing: 0.01em;
 }
+
 .card h2 {
   font-family: 'Playfair Display', serif;
   font-size: 26px;
@@ -146,6 +155,7 @@ input, button, select, textarea {
   line-height: 1.25;
   letter-spacing: 0.005em;
 }
+
 label {
   display: block;
   font-size: 12px;
@@ -191,7 +201,7 @@ button {
 
 table {
   font-size: 14px;
-  font-variant-numeric: tabular-nums; 
+  font-variant-numeric: tabular-nums;
 }
 
 th {
@@ -218,6 +228,7 @@ td select {
   display: flex;
   flex-direction: column;
 }
+
 #loginSection {
   margin: auto;
   width: 100%;
@@ -225,20 +236,24 @@ td select {
   padding: 36px 32px;
   box-sizing: border-box;
 }
+
 #loginSection h2 {
   text-align: center;
   margin-bottom: 24px;
 }
+
 #loginSection .password-wrapper {
   display: flex;
   gap: 8px;
   align-items: stretch;
 }
+
 #loginSection .password-wrapper input {
   flex: 1;
   min-width: 0;
   box-sizing: border-box;
 }
+
 #loginSection button[type="submit"] {
   width: 100%;
   margin-top: 16px;
@@ -247,13 +262,15 @@ td select {
 #adminMain {
   width: 100%;
 }
+
 .main:has(#adminMain[style*="none"]) {
   position: relative;
   background-image: url("../assets/ph.jpg");
-  background-size: cover;       
-  background-position: center;  
+  background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
 }
+
 .main:has(#adminMain[style*="none"])::before {
   content: "";
   position: absolute;
@@ -261,11 +278,13 @@ td select {
   background: rgba(0, 0, 0, 0.35);
   pointer-events: none;
 }
+
 .main:has(#adminMain[style*="none"]) .topbar,
 .main:has(#adminMain[style*="none"]) #loginSection {
   position: relative;
   z-index: 1;
 }
+
 .main:has(#adminMain[style*="none"]) .topbar h1,
 .main:has(#adminMain[style*="none"]) .topbar p {
   color: #fff;
@@ -300,12 +319,20 @@ td select {
   background: rgba(127, 29, 29, 0.08);
 }
 
-.stat-card:nth-child(2) .stat-icon { background: rgba(217, 119, 6, 0.12); }
-.stat-card:nth-child(3) .stat-icon { background: rgba(22, 163, 74, 0.12); }
-.stat-card:nth-child(4) .stat-icon { background: rgba(37, 99, 235, 0.10); }
+.stat-card:nth-child(2) .stat-icon {
+  background: rgba(217, 119, 6, 0.12);
+}
+
+.stat-card:nth-child(3) .stat-icon {
+  background: rgba(22, 163, 74, 0.12);
+}
+
+.stat-card:nth-child(4) .stat-icon {
+  background: rgba(37, 99, 235, 0.10);
+}
 
 .stat-info {
-  min-width: 0; 
+  min-width: 0;
 }
 
 .stat-info p {
@@ -329,30 +356,147 @@ td select {
 }
 
 /* ---- Sales Overview chart ---- */
-.chart-toggle-row{display:flex;align-items:center;gap:8px;margin-bottom:16px;font-size:14px;color:#555;}
-.chart-bars{display:flex;align-items:flex-end;gap:14px;height:160px;padding:10px 4px 0;}
-.chart-bar{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;flex:1;height:100%;gap:6px;}
-.chart-bar-fill{width:100%;max-width:34px;background:linear-gradient(180deg,#b91c1c,#7f1d1d);border-radius:6px 6px 0 0;min-height:2px;transition:height .3s ease;}
-.chart-bar-value{font-size:11px;color:#7f1d1d;font-weight:600;}
-.chart-bar-label{font-size:11px;color:#999;margin-top:2px;}
+.chart-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #555;
+}
+
+.chart-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  height: 160px;
+  padding: 10px 4px 0;
+}
+
+.chart-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+  height: 100%;
+  gap: 6px;
+}
+
+.chart-bar-fill {
+  width: 100%;
+  max-width: 34px;
+  background: linear-gradient(180deg, #b91c1c, #7f1d1d);
+  border-radius: 6px 6px 0 0;
+  min-height: 2px;
+  transition: height .3s ease;
+}
+
+.chart-bar-value {
+  font-size: 11px;
+  color: #7f1d1d;
+  font-weight: 600;
+}
+
+.chart-bar-label {
+  font-size: 11px;
+  color: #999;
+  margin-top: 2px;
+}
 
 /* ---- Toolbar rows (search + filters) ---- */
-.table-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px;}
+.table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
 .table-toolbar input[type="text"],
-.table-toolbar select{padding:8px 12px;border:1px solid rgba(127,29,29,0.15);border-radius:8px;font-size:13px;background:#fff;}
-.table-toolbar input[type="text"]{flex:1;min-width:160px;}
-.toolbar-add-btn{margin-left:auto;}
+.table-toolbar select {
+  padding: 8px 12px;
+  border: 1px solid rgba(127, 29, 29, 0.15);
+  border-radius: 8px;
+  font-size: 13px;
+  background: #fff;
+}
+
+.table-toolbar input[type="text"] {
+  flex: 1;
+  min-width: 160px;
+}
+
+.toolbar-add-btn {
+  margin-left: auto;
+}
 
 /* ---- Tags / pills ---- */
-.category-tag{display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(127,29,29,0.08);color:#7f1d1d;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;}
-.status-tag,.payment-tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;}
-.status-tag.status-pending{background:rgba(184,134,11,.12);color:#b8860b;}
-.status-tag.status-preparing{background:rgba(30,144,255,.12);color:#1e90ff;}
-.status-tag.status-delivering{background:rgba(255,140,0,.12);color:#ff8c00;}
-.status-tag.status-completed{background:rgba(46,139,87,.12);color:#2e8b57;}
-.status-tag.status-cancelled{background:rgba(176,0,0,.12);color:#b00000;}
-.payment-tag.payment-paid{background:rgba(46,139,87,.12);color:#2e8b57;}
-.payment-tag.payment-unpaid{background:rgba(176,0,0,.12);color:#b00000;}
+.category-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(127, 29, 29, 0.08);
+  color: #7f1d1d;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.status-tag,
+.payment-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.status-tag.status-pending {
+  background: rgba(184, 134, 11, .12);
+  color: #b8860b;
+}
+
+.status-tag.status-preparing {
+  background: rgba(30, 144, 255, .12);
+  color: #1e90ff;
+}
+
+.status-tag.status-delivering {
+  background: rgba(255, 140, 0, .12);
+  color: #ff8c00;
+}
+
+.status-tag.status-completed {
+  background: rgba(46, 139, 87, .12);
+  color: #2e8b57;
+}
+
+.status-tag.status-cancelled {
+  background: rgba(176, 0, 0, .12);
+  color: #b00000;
+}
+
+.payment-tag.payment-paid {
+  background: rgba(46, 139, 87, .12);
+  color: #2e8b57;
+}
+
+.payment-tag.payment-unpaid {
+  background: rgba(176, 0, 0, .12);
+  color: #b00000;
+}
 
 /* ---- Inline menu edit inputs ---- */
-.cell-name input,.cell-price input,.cell-category input{width:100%;padding:6px 8px;border:1px solid rgba(127,29,29,.2);border-radius:6px;font-size:13px;}
+.cell-name input,
+.cell-price input,
+.cell-category input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid rgba(127, 29, 29, .2);
+  border-radius: 6px;
+  font-size: 13px;
+}
