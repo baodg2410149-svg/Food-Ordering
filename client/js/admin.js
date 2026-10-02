@@ -10,6 +10,15 @@ const STATUS_ORDER = ["pending", "preparing", "delivering", "completed", "cancel
 // instantly without hitting the API again on every keystroke.
 let allMenuItems = [];
 let allOrders = [];
+let supportConversations = [];
+let activeSupportConversationId = null;
+let activeSupportMessages = [];
+let supportListOffset = 0;
+let supportListHasMore = false;
+let supportMessageOffset = 0;
+let supportMessageHasMore = false;
+let supportPollTimer = null;
+let failedSupportReply = "";
 
 // ---- Login elements ----
 const loginForm = document.getElementById("loginForm");
@@ -66,6 +75,8 @@ function showDashboard() {
   loadMenuTable();
   loadOrderTable();
   loadStats();
+  loadSupportConversations();
+  if (!supportPollTimer) supportPollTimer = setInterval(pollSupport, 10000);
 }
 
 // STATISTICS + SALES CHART
@@ -162,6 +173,302 @@ function renderChart() {
 
     bar.append(valueLabel, fill, dayLabel);
     salesChart.append(bar);
+  });
+}
+
+// CUSTOMER SUPPORT
+
+const supportNavLink = document.getElementById("supportNavLink");
+const supportUnreadBadge = document.getElementById("supportUnreadBadge");
+const supportRefreshBtn = document.getElementById("supportRefreshBtn");
+const supportSearchInput = document.getElementById("supportSearchInput");
+const supportStatusFilter = document.getElementById("supportStatusFilter");
+const supportListStatus = document.getElementById("supportListStatus");
+const supportConversationList = document.getElementById("supportConversationList");
+const supportLoadMoreBtn = document.getElementById("supportLoadMoreBtn");
+const supportEmptyState = document.getElementById("supportEmptyState");
+const supportActivePane = document.getElementById("supportActivePane");
+const supportActiveCustomer = document.getElementById("supportActiveCustomer");
+const supportActiveMeta = document.getElementById("supportActiveMeta");
+const supportActiveStatus = document.getElementById("supportActiveStatus");
+const supportOrderInfo = document.getElementById("supportOrderInfo");
+const supportLoadOlderBtn = document.getElementById("supportLoadOlderBtn");
+const supportMessages = document.getElementById("supportMessages");
+const supportReplyForm = document.getElementById("supportReplyForm");
+const supportReplyInput = document.getElementById("supportReplyInput");
+const supportReplyStatus = document.getElementById("supportReplyStatus");
+const supportRetryBtn = document.getElementById("supportRetryBtn");
+const supportSendBtn = document.getElementById("supportSendBtn");
+
+supportNavLink.addEventListener("click", (event) => {
+  event.preventDefault();
+  document.getElementById("customerSupportSection").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+supportRefreshBtn.addEventListener("click", () => loadSupportConversations());
+supportSearchInput.addEventListener("input", debounceSupportSearch);
+supportStatusFilter.addEventListener("change", () => loadSupportConversations());
+supportLoadMoreBtn.addEventListener("click", () => loadSupportConversations({ append: true }));
+supportLoadOlderBtn.addEventListener("click", () => loadSupportConversation(activeSupportConversationId, { older: true }));
+supportActiveStatus.addEventListener("change", updateActiveSupportStatus);
+supportRetryBtn.addEventListener("click", () => {
+  if (failedSupportReply) sendSupportReply(failedSupportReply);
+});
+supportReplyInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    supportReplyForm.requestSubmit();
+  }
+});
+supportReplyForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  sendSupportReply(supportReplyInput.value);
+});
+
+let supportSearchTimer;
+function debounceSupportSearch() {
+  clearTimeout(supportSearchTimer);
+  supportSearchTimer = setTimeout(() => loadSupportConversations(), 250);
+}
+
+async function pollSupport() {
+  if (adminMain.style.display === "none") return;
+  const activeId = activeSupportConversationId;
+  const shouldStick = isSupportMessageNearBottom();
+  await loadSupportConversations({ silent: true });
+  if (activeId) await loadSupportConversation(activeId, { silent: true, keepScroll: !shouldStick });
+}
+
+async function loadSupportConversations(options = {}) {
+  if (!options.append) supportListOffset = 0;
+  const params = new URLSearchParams();
+  params.set("limit", "10");
+  params.set("offset", String(supportListOffset));
+  if (supportSearchInput.value.trim()) params.set("search", supportSearchInput.value.trim());
+  if (supportStatusFilter.value) params.set("status", supportStatusFilter.value);
+
+  if (!options.silent && !options.append) {
+    supportListStatus.hidden = false;
+    supportListStatus.textContent = "Loading conversations...";
+  }
+
+  try {
+    const data = await apiGet(`/support/admin/conversations?${params}`);
+    supportConversations = options.append ? supportConversations.concat(data.items || []) : data.items || [];
+    supportListOffset += (data.items || []).length;
+    supportListHasMore = Boolean(data.hasMore);
+    renderSupportConversationList();
+    updateSupportBadge(data.unreadTotal || 0);
+  } catch (err) {
+    supportListStatus.hidden = false;
+    supportListStatus.textContent = "Unable to load support conversations.";
+    console.error(err);
+  }
+}
+
+function renderSupportConversationList() {
+  supportConversationList.replaceChildren();
+  supportLoadMoreBtn.hidden = !supportListHasMore;
+
+  if (!supportConversations.length) {
+    supportListStatus.hidden = false;
+    supportListStatus.textContent = "No support conversations yet.";
+    return;
+  }
+
+  supportListStatus.hidden = true;
+  supportConversations.forEach((conversation) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `support-conversation-item${conversation.id === activeSupportConversationId ? " is-active" : ""}`;
+
+    const top = document.createElement("span");
+    top.className = "support-conversation-top";
+    const name = document.createElement("span");
+    name.className = "support-conversation-name";
+    name.textContent = conversation.customerName || "Customer";
+    top.append(name, supportStatusPill(conversation.status));
+
+    if (conversation.unreadForAdmin) {
+      const unread = document.createElement("span");
+      unread.className = "support-unread";
+      unread.textContent = conversation.unreadForAdmin;
+      top.append(unread);
+    }
+
+    const meta = document.createElement("span");
+    meta.className = "support-conversation-meta";
+    meta.textContent = `Order #${conversation.orderId || "N/A"} - ${formatSupportDate(conversation.updatedAt)}`;
+
+    const preview = document.createElement("span");
+    preview.className = "support-conversation-preview";
+    preview.textContent = conversation.lastMessage
+      ? `${conversation.lastMessage.sender === "admin" ? "Admin" : "Customer"}: ${conversation.lastMessage.text}`
+      : "No messages yet";
+
+    button.append(top, meta, preview);
+    button.addEventListener("click", () => loadSupportConversation(conversation.id));
+    supportConversationList.append(button);
+  });
+}
+
+function updateSupportBadge(count) {
+  supportUnreadBadge.hidden = count === 0;
+  supportUnreadBadge.textContent = count;
+}
+
+async function loadSupportConversation(id, options = {}) {
+  if (!id) return;
+  const previousScrollHeight = supportMessages.scrollHeight;
+  const previousScrollTop = supportMessages.scrollTop;
+  const shouldStick = !options.keepScroll && (options.older ? false : isSupportMessageNearBottom());
+  const offset = options.older ? supportMessageOffset : 0;
+
+  try {
+    const data = await apiGet(`/support/admin/conversations/${id}?limit=20&offset=${offset}`);
+    activeSupportConversationId = id;
+    supportMessageHasMore = data.nextOffset !== null;
+    supportMessageOffset = data.nextOffset || 0;
+    activeSupportMessages = options.older ? (data.messages || []).concat(activeSupportMessages) : data.messages || [];
+
+    renderSupportActivePane(data.conversation);
+    renderSupportMessages();
+    renderSupportConversationList();
+    await loadSupportConversations({ silent: true });
+
+    if (options.older) {
+      supportMessages.scrollTop = supportMessages.scrollHeight - previousScrollHeight + previousScrollTop;
+    } else if (shouldStick) {
+      supportMessages.scrollTop = supportMessages.scrollHeight;
+    }
+  } catch (err) {
+    supportReplyStatus.textContent = "Unable to load conversation.";
+    supportReplyStatus.className = "support-error";
+    console.error(err);
+  }
+}
+
+function renderSupportActivePane(conversation) {
+  supportEmptyState.hidden = true;
+  supportActivePane.hidden = false;
+  supportActiveCustomer.textContent = conversation.customerName || "Customer";
+  supportActiveMeta.textContent = `Conversation #${conversation.id} - Updated ${formatSupportDate(conversation.updatedAt)}`;
+  supportActiveStatus.value = conversation.status;
+  supportLoadOlderBtn.hidden = !supportMessageHasMore;
+
+  supportOrderInfo.replaceChildren();
+  if (conversation.order) {
+    supportOrderInfo.append(
+      supportInfoText(`Order #${conversation.order.id}`),
+      supportInfoText(`Status: ${conversation.order.status}`),
+      supportInfoText(`Payment: ${conversation.order.paymentStatus}`),
+      supportInfoText(`Total: ${Number(conversation.order.total || 0).toLocaleString()} VND`)
+    );
+    const link = document.createElement("a");
+    link.href = `Order_tracking.html?orderId=${encodeURIComponent(conversation.order.id)}`;
+    link.textContent = "Open tracking";
+    supportOrderInfo.append(link);
+  } else {
+    supportOrderInfo.append(supportInfoText("No order linked"));
+  }
+}
+
+function renderSupportMessages() {
+  supportMessages.replaceChildren();
+  if (!activeSupportMessages.length) {
+    const empty = document.createElement("div");
+    empty.className = "support-panel-state";
+    empty.textContent = "No messages yet.";
+    supportMessages.append(empty);
+    return;
+  }
+
+  activeSupportMessages.forEach((message) => {
+    const bubble = document.createElement("div");
+    bubble.className = `support-message${message.sender === "admin" ? " is-admin" : ""}`;
+
+    const text = document.createElement("div");
+    text.className = "support-message-text";
+    text.textContent = message.text;
+
+    const time = document.createElement("span");
+    time.className = "support-message-time";
+    time.textContent = `${message.sender === "admin" ? "Admin" : "Customer"} - ${formatSupportDate(message.createdAt)}`;
+
+    bubble.append(text, time);
+    supportMessages.append(bubble);
+  });
+}
+
+async function sendSupportReply(rawMessage) {
+  const message = String(rawMessage || "").trim();
+  if (!message || !activeSupportConversationId) return;
+
+  supportSendBtn.disabled = true;
+  supportReplyInput.disabled = true;
+  supportReplyStatus.textContent = "Sending...";
+  supportReplyStatus.className = "";
+  supportRetryBtn.hidden = true;
+
+  try {
+    await apiPost(`/support/admin/conversations/${activeSupportConversationId}/messages`, { message });
+    failedSupportReply = "";
+    supportReplyInput.value = "";
+    supportReplyStatus.textContent = "Sent.";
+    await loadSupportConversation(activeSupportConversationId);
+  } catch (err) {
+    failedSupportReply = message;
+    supportReplyStatus.textContent = "Failed to send.";
+    supportReplyStatus.className = "support-error";
+    supportRetryBtn.hidden = false;
+    console.error(err);
+  } finally {
+    supportSendBtn.disabled = false;
+    supportReplyInput.disabled = false;
+    supportReplyInput.focus();
+  }
+}
+
+async function updateActiveSupportStatus() {
+  if (!activeSupportConversationId) return;
+
+  try {
+    await apiPut(`/support/admin/conversations/${activeSupportConversationId}/status`, {
+      status: supportActiveStatus.value,
+    });
+    await loadSupportConversations({ silent: true });
+    await loadSupportConversation(activeSupportConversationId, { silent: true, keepScroll: true });
+  } catch (err) {
+    supportReplyStatus.textContent = "Unable to update status.";
+    supportReplyStatus.className = "support-error";
+    console.error(err);
+  }
+}
+
+function isSupportMessageNearBottom() {
+  return supportMessages.scrollHeight - supportMessages.scrollTop - supportMessages.clientHeight < 80;
+}
+
+function supportStatusPill(status) {
+  const pill = document.createElement("span");
+  pill.className = `support-status-pill support-status-${status}`;
+  pill.textContent = status === "in_progress" ? "In Progress" : status;
+  return pill;
+}
+
+function supportInfoText(text) {
+  const span = document.createElement("span");
+  span.textContent = text;
+  return span;
+}
+
+function formatSupportDate(value) {
+  const date = value ? new Date(value) : null;
+  if (!date || Number.isNaN(date.getTime())) return "Not available";
+  return date.toLocaleString("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
 

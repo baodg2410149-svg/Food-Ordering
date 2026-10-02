@@ -625,3 +625,28 @@
         animation: none
     }
 }
+
+.support-line {
+    max-width: 82%;
+    margin: 0 0 10px;
+    padding: 9px 11px;
+    border-radius: 12px;
+    background: #f1e8df;
+    color: #302018;
+    white-space: pre-wrap;
+    word-break: break-word
+}
+
+.support-line.admin {
+    margin-left: auto;
+    background: #934836;
+    color: #fffaf1
+}
+
+.support-line.system {
+    max-width: none;
+    background: transparent;
+    color: #765e4c;
+    text-align: center;
+    font-style: italic
+}
