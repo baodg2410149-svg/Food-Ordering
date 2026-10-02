@@ -5,3 +5,4 @@ server/node_modules/
 server/data/orders.json
 
 server/data/revenue.json
+server/data/support.json

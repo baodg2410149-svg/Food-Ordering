@@ -71,6 +71,10 @@ let activeOrder = null;
 let pollingTimer = null;
 let pollingErrors = 0;
 let requestInFlight = false;
+let supportConversation = null;
+let supportMessages = [];
+let supportPollingTimer = null;
+let supportSending = false;
 
 trackForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -80,6 +84,12 @@ trackForm.addEventListener("submit", (event) => {
 supportOpen.addEventListener("click", openSupportChat);
 supportClose.addEventListener("click", closeSupportChat);
 supportForm.addEventListener("submit", sendSupportMessage);
+supportMessage.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    supportForm.requestSubmit();
+  }
+});
 document.querySelectorAll(".quick-options button").forEach((button) => {
   button.addEventListener("click", () => {
     supportMessage.value = button.textContent;
@@ -95,7 +105,10 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 
-window.addEventListener("beforeunload", stopPolling);
+window.addEventListener("beforeunload", () => {
+  stopPolling();
+  stopSupportPolling();
+});
 
 initFromUrl();
 
@@ -413,29 +426,128 @@ function errorMessageFor(err) {
   return "We're having trouble retrieving your order right now. Please try again.";
 }
 
-function openSupportChat() {
+async function openSupportChat() {
+  if (!activeOrderId) {
+    showError("Please find your order before opening support.");
+    return;
+  }
+
   supportPanel.hidden = false;
   supportPanel.setAttribute("aria-hidden", "false");
   supportMessage.focus();
+  await openSupportConversation();
 }
 
 function closeSupportChat() {
   supportPanel.hidden = true;
   supportPanel.setAttribute("aria-hidden", "true");
+  stopSupportPolling();
   supportOpen.focus();
 }
 
-function sendSupportMessage(event) {
+async function openSupportConversation() {
+  renderSupportSystemMessage("Loading support conversation...");
+
+  try {
+    const data = await apiPost("/support/conversations", { orderId: activeOrderId });
+    supportConversation = data.conversation;
+    await loadSupportMessages({ scrollToBottom: true });
+    startSupportPolling();
+  } catch (err) {
+    renderSupportSystemMessage("Unable to open support. Please try again.");
+  }
+}
+
+async function loadSupportMessages(options = {}) {
+  if (!supportConversation) return;
+  const shouldStick = options.scrollToBottom || isSupportNearBottom();
+
+  try {
+    const data = await apiGet(
+      `/support/conversations/${supportConversation.id}/messages?orderId=${encodeURIComponent(activeOrderId)}&limit=50`
+    );
+    supportConversation = data.conversation;
+    supportMessages = data.messages || [];
+    renderSupportMessages();
+    if (shouldStick) scrollSupportToBottom();
+  } catch (err) {
+    if (!supportMessages.length) renderSupportSystemMessage("Unable to load support messages.");
+  }
+}
+
+function startSupportPolling() {
+  stopSupportPolling();
+  supportPollingTimer = window.setInterval(() => {
+    if (!document.hidden && !supportPanel.hidden) loadSupportMessages();
+  }, 8000);
+}
+
+function stopSupportPolling() {
+  if (supportPollingTimer) window.clearInterval(supportPollingTimer);
+  supportPollingTimer = null;
+}
+
+async function sendSupportMessage(event) {
   event.preventDefault();
   const message = supportMessage.value.trim();
-  if (!message) return;
+  if (!message || supportSending) return;
+  if (!supportConversation) await openSupportConversation();
+  if (!supportConversation) return;
 
-  const customer = document.createElement("p");
-  customer.textContent = `You: ${message}`;
-  const reply = document.createElement("p");
-  reply.textContent = `Phở Việt Support: Thank you. We will check order #${activeOrderId || "your order"} and assist you shortly.`;
-  supportLog.append(customer, reply);
-  supportMessage.value = "";
+  const clientMessageId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  const sendButton = supportForm.querySelector("button[type='submit']");
+  supportSending = true;
+  supportMessage.disabled = true;
+  sendButton.disabled = true;
+
+  try {
+    await apiPost(`/support/conversations/${supportConversation.id}/messages`, {
+      orderId: activeOrderId,
+      message,
+      clientMessageId,
+    });
+    supportMessage.value = "";
+    await loadSupportMessages({ scrollToBottom: true });
+  } catch (err) {
+    renderSupportSystemMessage("Message failed to send. Please try again.", { replace: false });
+  } finally {
+    supportSending = false;
+    supportMessage.disabled = false;
+    sendButton.disabled = false;
+    supportMessage.focus();
+  }
+}
+
+function renderSupportMessages() {
+  supportLog.replaceChildren();
+
+  if (!supportMessages.length) {
+    renderSupportSystemMessage("Hello! How can we help with your order?", { replace: false });
+    return;
+  }
+
+  supportMessages.forEach((message) => {
+    const row = document.createElement("p");
+    row.className = message.sender === "admin" ? "support-line admin" : "support-line customer";
+    const who = message.sender === "admin" ? "Support" : "You";
+    row.textContent = `${who}: ${message.text} (${formatTime(message.createdAt)})`;
+    supportLog.append(row);
+  });
+}
+
+function renderSupportSystemMessage(message, options = {}) {
+  if (options.replace !== false) supportLog.replaceChildren();
+  const line = document.createElement("p");
+  line.className = "support-line system";
+  line.textContent = message;
+  supportLog.append(line);
+}
+
+function isSupportNearBottom() {
+  return supportLog.scrollHeight - supportLog.scrollTop - supportLog.clientHeight < 60;
+}
+
+function scrollSupportToBottom() {
   supportLog.scrollTop = supportLog.scrollHeight;
 }
 

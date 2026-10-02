@@ -19,6 +19,7 @@
       <a href="Ordering_page.html"><span>Orders</span></a>
       <a href="Order_tracking.html"><span>Tracking</span></a>
       <a class="active" href="Admin.html"><span>Admin</span></a>
+      <a href="#customerSupportSection" id="supportNavLink"><span>Customer Support <strong id="supportUnreadBadge" class="nav-badge" hidden>0</strong></span></a>
     </nav>
   </aside>
 
@@ -82,6 +83,68 @@
           Show orders instead of revenue (last 7 days)
         </label>
         <div class="chart-bars" id="salesChart"></div>
+      </section>
+
+      <!-- CUSTOMER SUPPORT -->
+      <section class="card support-admin-card" id="customerSupportSection">
+        <div class="support-admin-heading">
+          <div>
+            <h2>Customer Support</h2>
+            <p>Review order questions and reply to customers.</p>
+          </div>
+          <button type="button" id="supportRefreshBtn">Refresh</button>
+        </div>
+
+        <div class="support-admin-toolbar">
+          <input type="text" id="supportSearchInput" placeholder="Search customer or order #...">
+          <select id="supportStatusFilter">
+            <option value="">All statuses</option>
+            <option value="open">Open</option>
+            <option value="in_progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+          </select>
+        </div>
+
+        <div class="support-admin-layout">
+          <aside class="support-conversation-list">
+            <div id="supportListStatus" class="support-panel-state">Loading conversations...</div>
+            <div id="supportConversationList"></div>
+            <button type="button" id="supportLoadMoreBtn" class="support-load-more" hidden>Load more</button>
+          </aside>
+
+          <section class="support-chat-detail" id="supportChatDetail">
+            <div id="supportEmptyState" class="support-empty-state">
+              Select a conversation to read and reply.
+            </div>
+
+            <div id="supportActivePane" class="support-active-pane" hidden>
+              <div class="support-detail-header">
+                <div>
+                  <h3 id="supportActiveCustomer">Customer</h3>
+                  <p id="supportActiveMeta"></p>
+                </div>
+                <select id="supportActiveStatus">
+                  <option value="open">Open</option>
+                  <option value="in_progress">In Progress</option>
+                  <option value="resolved">Resolved</option>
+                </select>
+              </div>
+
+              <div id="supportOrderInfo" class="support-order-info"></div>
+              <button type="button" id="supportLoadOlderBtn" class="support-load-more" hidden>Load older messages</button>
+              <div id="supportMessages" class="support-messages" aria-live="polite"></div>
+
+              <form id="supportReplyForm" class="support-reply-form">
+                <textarea id="supportReplyInput" rows="3" placeholder="Type a reply..."></textarea>
+                <div class="support-reply-actions">
+                  <span id="supportReplyStatus"></span>
+                  <button type="button" id="supportRetryBtn" hidden>Retry</button>
+                  <button type="submit" id="supportSendBtn">Send</button>
+                </div>
+              </form>
+            </div>
+          </section>
+        </div>
       </section>
 
       <!-- ADD DISH (collapsible) -->
